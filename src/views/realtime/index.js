@@ -36,7 +36,7 @@ const Dashboard1 = () => {
   const operateValues = async () => {
     try {
       const resultstc1 = await axios.get(
-        "http://127.0.0.1:3000/api/lecture/ranges",
+        "https://temperaturesback.netlify.app/.netlify/functions/index/api/lecture/ranges",
         {
           params: {
             from: valueFrom.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
@@ -50,7 +50,7 @@ const Dashboard1 = () => {
       setValueTC1(resultstc1.data);
 
       const resultstc2 = await axios.get(
-        "http://127.0.0.1:3000/api/lecture/ranges",
+        "https://temperaturesback.netlify.app/.netlify/functions/index/api/lecture/ranges",
         {
           params: {
             from: valueFrom.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),

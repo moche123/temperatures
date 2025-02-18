@@ -108,7 +108,7 @@ const Reportes = () => {
   const operateValuesByType = async (type, sensor) => {
     try {
       const resultsFilter = await axios.get(
-        "http://127.0.0.1:3000/api/lecture/reports",
+        "https://temperaturesback.netlify.app/.netlify/functions/index/api/lecture/reports",
         {
           params: {
             from: valueFrom.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
