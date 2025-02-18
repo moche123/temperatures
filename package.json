@@ -1,0 +1,47 @@
+{
+  "name": "flexy-app-with-vite",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "5.11.16",
+    "@mui/lab": "5.0.0-alpha.133",
+    "@mui/material": "5.13.4",
+    "@mui/system": "^6.1.9",
+    "@mui/x-date-pickers": "^7.23.0",
+    "@tabler/icons-react": "^2.35.0",
+    "apexcharts": "^4.1.0",
+    "axios": "^1.7.9",
+    "dayjs": "^1.11.13",
+    "json-as-xlsx": "^2.5.6",
+    "jspdf": "^2.5.2",
+    "jspdf-autotable": "^3.8.4",
+    "lodash": "^4.17.21",
+    "react": "^18.2.0",
+    "react-apexcharts": "^1.4.1",
+    "react-dom": "^18.2.0",
+    "react-helmet": "^6.1.0",
+    "react-router-dom": "^6.16.0",
+    "sweetalert2": "^11.14.5",
+    "vite-plugin-svgr": "^4.0.0",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "@vitejs/plugin-react": "^4.0.3",
+    "eslint": "^8.45.0",
+    "eslint-plugin-react": "^7.32.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.3",
+    "vite": "^4.4.5"
+  }
+}

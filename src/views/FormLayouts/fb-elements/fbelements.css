@@ -1,0 +1,27 @@
+.imgcontainer{
+    margin-bottom: 1rem;
+    gap: 0.125rem;
+    display: grid;
+    padding-top: 0 !important;
+    padding-bottom: 1rem;
+  
+    /* margin-bottom: 0.5rem; */
+    .imgwrapper{
+        display: flex;
+        justify-content: center;
+    }
+    img{
+        background-size:contain;
+
+    }
+    button{
+        height: min-content;
+    }
+    
+}
+@media (min-width: 800px) {
+    .imgcontainer{
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+  }

@@ -1,0 +1,15 @@
+.superior {
+  gap: 1rem;
+}
+.labelinput {
+  gap: 0.5rem;
+  display: flex;
+}
+@media (max-width: 500px) {
+  .labelinput {
+    flex-wrap: wrap;
+  }
+}
+.hrdivisor {
+  border: 0.5px solid rgb(232, 232, 232);
+}

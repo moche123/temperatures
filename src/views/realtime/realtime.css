@@ -1,0 +1,18 @@
+.gapgrid {
+    gap: 15px;
+    align-items: center;
+  }
+  @media (min-width: 800px) {
+    .gapgrid {
+      gap: 0;
+    }
+  }
+  .tableitem{
+    cursor: pointer;
+  }
+  tbody{
+  
+    tr:hover{
+      background-color: rgb(230, 238, 243);
+    }
+  }
