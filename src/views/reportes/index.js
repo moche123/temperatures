@@ -94,7 +94,6 @@ const Reportes = () => {
   const [showTable, setShowTable] = useState(false);
 
   useEffect(() => {
-    console.log(resultsFilter);
     if (resultsFilter.length > 0) {
       setShowTable(true);
     }
@@ -150,7 +149,6 @@ const Reportes = () => {
 
   const csvdownload = async () => {
     try {
-      console.log(resultsFilter);
       const worksheet = XLSX.utils.json_to_sheet(
         resultsFilter.map((el) => {
           return {
@@ -165,7 +163,6 @@ const Reportes = () => {
       //XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
       XLSX.writeFile(workbook, "DataSheet.xlsx");
     } catch (error) {
-      console.log(error);
       Swal.fire({
         title: "Error!",
         text:
@@ -178,7 +175,6 @@ const Reportes = () => {
   };
   const pdfdownload = async () => {
     try {
-      // var employees = resultsFilter;
       console.log(resultsFilter);
       var doc = new jsPDF();
 
@@ -194,7 +190,6 @@ const Reportes = () => {
       });
       doc.save("download.pdf");
     } catch (error) {
-      console.log(error);
       Swal.fire({
         title: "Error!",
         text:

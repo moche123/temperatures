@@ -17,7 +17,6 @@ const ExTable2 = ({resultsFilter}) => {
  
   const [products, setProducts] = useState([]);
      useEffect(() => {
-      console.log(resultsFilter);
       // eslint-disable-next-line react/prop-types
       const pushedResults = resultsFilter.map((el,i) =>{ 
           return {

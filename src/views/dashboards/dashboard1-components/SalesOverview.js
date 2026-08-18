@@ -32,10 +32,6 @@ function interpolateByDates(data) {
 const SalesOverview = ( data ) => {
   const { dates, interpolatedTC1, interpolatedTC2 } = interpolateByDates(data);
 
-  console.log(interpolatedTC1)
-  console.log(interpolatedTC2)
-  console.log(dates)
-
   const [state] = useState({
     series: [
       { name: 'series1', data: interpolatedTC1 },
