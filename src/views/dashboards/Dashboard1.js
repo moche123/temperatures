@@ -1,139 +1,95 @@
-import { Grid, Box, Typography, Button } from "@mui/material";
-import TextField from "@mui/material/TextField";
-import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import utc from "dayjs/plugin/utc";
-import axios from "axios";
-import Swal from "sweetalert2";
-
-import { SalesOverview } from "./dashboard1-components";
+import { Grid, Box } from "@mui/material";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
-import "./dashboard1.css";
+import utc from "dayjs/plugin/utc";
+// import axios from "axios";
+// import Swal from "sweetalert2";
+
+import { SalesOverview } from "../dashboards/dashboard1-components";
+
+import "../dashboards/dashboard1.css";
+
+dayjs.extend(utc);
+
+const generateMockSeries = (from, to, base, variance) => {
+  const data = [];
+  let current = dayjs(from);
+  const end = dayjs(to);
+  while (current.isBefore(end) || current.isSame(end)) {
+    data.push({
+      FECHA: current.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
+      AVG: Number((base + (Math.random() - 0.5) * variance).toFixed(1)),
+    });
+    current = current.add(1, "day");
+  }
+  return data;
+};
 
 const Dashboard1 = () => {
-  // 2\
-  dayjs.extend(utc);
-
   const dateFrom = dayjs()
     .utc()
-    .subtract(1, "day")
+    .subtract(5, "month")
     .format("YYYY-MM-DDTHH:mm:ss.SSS[Z]");
   const dateTo = dayjs()
     .utc()
-    .add(1, "day")
+    .add(50, "day")
     .format("YYYY-MM-DDTHH:mm:ss.SSS[Z]");
 
-  const [valueFrom, setValueFrom] = useState(dayjs(dateFrom));
-  const [valueTo, setValueTo] = useState(dayjs(dateTo));
+  const [valueFrom] = useState(dayjs(dateFrom));
+  const [valueTo] = useState(dayjs(dateTo));
   const [valueTC1, setValueTC1] = useState([]);
   const [valueTC2, setValueTC2] = useState([]);
 
   const [showGraphic, setShowGraphic] = useState(false);
 
-  const handleChangeFrom = (newValue) => {
-    setValueFrom(newValue);
-  };
-
-  const handleChangeTo = (newValue) => {
-    setValueTo(newValue);
-  };
-
   useEffect(() => {
-    if (valueTC1.length > 0 && valueTC2.length > 0) {
-      setShowGraphic(true);
-    }
-  }, [valueTC1, valueTC2]);
+    operateValues();
+  }, [valueFrom, valueTo]);
 
   const operateValues = async () => {
-    try {
-      const resultstc1 = await axios.get(
-        "https://temperaturesback.netlify.app/.netlify/functions/index/api/lecture/ranges",
-        {
-          params: {
-            from: valueFrom.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
-            to: valueTo.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
-            type: "tc1",
-          },
-        }
-      );
-      setValueTC1(resultstc1.data);
+    // --- Backend (disabled, using mock data below) ---
+    // try {
+    //   const resultstc1 = await axios.get(
+    //     "https://temperaturesback.netlify.app/.netlify/functions/index/api/lecture/ranges",
+    //     {
+    //       params: {
+    //         from: valueFrom.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
+    //         to: valueTo.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
+    //         type: "tc1",
+    //       },
+    //     }
+    //   );
+    //   setValueTC1(resultstc1.data);
+    //
+    //   const resultstc2 = await axios.get(
+    //     "https://temperaturesback.netlify.app/.netlify/functions/index/api/lecture/ranges",
+    //     {
+    //       params: {
+    //         from: valueFrom.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
+    //         to: valueTo.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
+    //         type: "tc2",
+    //       },
+    //     }
+    //   );
+    //   setValueTC2(resultstc2.data);
+    //   setShowGraphic(true);
+    // } catch (error) {
+    //   setShowGraphic(false);
+    //   Swal.fire({
+    //     title: "Error!",
+    //     text: error?.response?.data?.message ?? "There was an error reading the data",
+    //     icon: "error",
+    //     confirmButtonText: "Ok",
+    //   });
+    // }
 
-      const resultstc2 = await axios.get(
-        "https://temperaturesback.netlify.app/.netlify/functions/index/api/lecture/ranges",
-        {
-          params: {
-            from: valueFrom.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
-            to: valueTo.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
-            type: "tc2",
-          },
-        }
-      );
-
-      setValueTC2(resultstc2.data);
-    } catch (error) {
-      setShowGraphic(false);
-      Swal.fire({
-        title: "Error!",
-        text:
-          error?.response?.data?.message ??
-          "Hubo un error al momento de la lectura",
-        icon: "error",
-        confirmButtonText: "Ok",
-      });
-    }
+    setValueTC1(generateMockSeries(valueFrom, valueTo, 22, 6));
+    setValueTC2(generateMockSeries(valueFrom, valueTo, 25, 8));
+    setShowGraphic(true);
   };
 
   return (
     <Box>
-      <Typography
-        variant="h1"
-        sx={{
-          marginBottom: "0",
-        }}
-        gutterBottom
-      >
-        Inicio
-      </Typography>
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <br />
-        <Grid
-          container
-          spacing={0}
-          sx={{
-            display: "flex",
-          }}
-          className="gapgrid"
-        >
-          <Grid item xs={12} sm={4}>
-            <DateTimePicker
-              label="Desde"
-              value={valueFrom}
-              onChange={handleChangeFrom}
-              renderInput={(params) => <TextField {...params} />}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <DateTimePicker
-              label="Hasta"
-              value={valueTo}
-              onChange={handleChangeTo}
-              renderInput={(params) => <TextField {...params} />}
-            />
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={operateValues}
-            >
-              Buscar
-            </Button>
-          </Grid>
-        </Grid>
-      </LocalizationProvider>
-
       <Grid container spacing={0}>
         <Grid item xs={12} lg={12}>
           {showGraphic && (

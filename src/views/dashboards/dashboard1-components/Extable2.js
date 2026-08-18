@@ -48,12 +48,12 @@ const ExTable2 = ({resultsFilter}) => {
             </TableCell>
             <TableCell>
               <Typography color="textSecondary" variant="h6">
-                Fecha
+                Date
               </Typography>
             </TableCell>
             <TableCell>
               <Typography color="textSecondary" variant="h6">
-                Hora
+                Time
               </Typography>
             </TableCell>
             <TableCell>
@@ -63,7 +63,7 @@ const ExTable2 = ({resultsFilter}) => {
             </TableCell>
             <TableCell>
               <Typography color="textSecondary" variant="h6">
-                Valor
+                Value
               </Typography>
             </TableCell>
 

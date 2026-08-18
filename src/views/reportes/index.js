@@ -5,20 +5,14 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import "./reportes.css";
-import axios from "axios";
+// import axios from "axios";
 import utc from "dayjs/plugin/utc";
 import dayjs from "dayjs";
 
-import // BlogCard,
-//   SalesOverview,
-// ProductPerformance,
-// DailyActivities,
-"../dashboards/dashboard1-components";
 import { useEffect, useState } from "react";
 import "../dashboards/dashboard1.css";
 import ExTable2 from "../dashboards/dashboard1-components/Extable2";
 import Swal from "sweetalert2";
-// import xlsx from "json-as-xlsx";
 import * as XLSX from "xlsx";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -26,22 +20,22 @@ import autoTable from "jspdf-autotable";
 const lectors = [
   {
     value: "tc1",
-    label: "Lector 1",
+    label: "Reader 1",
   },
   {
     value: "tc2",
-    label: "Lector 2",
+    label: "Reader 2",
   },
 ];
 
 const sensors = [
   {
     value: "AMBIENTE1",
-    label: "Ambiente 1",
+    label: "Environment 1",
   },
   {
     value: "AMBIENTE2",
-    label: "Ambiente 2",
+    label: "Environment 2",
   },
   {
     value: "SENSOR1",
@@ -60,6 +54,27 @@ const sensors = [
     label: "Sensor 4",
   },
 ];
+
+const generateMockReport = (from, to, sensor) => {
+  const rows = [];
+  const start = dayjs(from);
+  const end = dayjs(to);
+  const totalHours = Math.max(end.diff(start, "hour"), 1);
+  const step = Math.max(Math.floor(totalHours / 20), 1);
+  let current = start;
+  let i = 0;
+  while (current.isBefore(end) && i < 40) {
+    rows.push({
+      FECHA: current.format("YYYY-MM-DD"),
+      TIEMPO: current.format("HH:mm:ss"),
+      SENSOR: sensor,
+      VALOR: Number((20 + Math.random() * 10).toFixed(1)),
+    });
+    current = current.add(step, "hour");
+    i += 1;
+  }
+  return rows;
+};
 
 const Reportes = () => {
   // 2\
@@ -106,30 +121,31 @@ const Reportes = () => {
   };
 
   const operateValuesByType = async (type, sensor) => {
-    try {
-      const resultsFilter = await axios.get(
-        "https://temperaturesback.netlify.app/.netlify/functions/index/api/lecture/reports",
-        {
-          params: {
-            from: valueFrom.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
-            to: valueTo.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
-            type: type,
-            sensor: sensor,
-          },
-        }
-      );
-      setValueResultsFilter(resultsFilter.data);
-    } catch (error) {
-      setShowTable(false);
-      Swal.fire({
-        title: "Error!",
-        text:
-          error?.response?.data?.message ??
-          "Hubo un error al momento de la lectura",
-        icon: "error",
-        confirmButtonText: "Ok",
-      });
-    }
+    // --- Backend (disabled, using mock data below) ---
+    // try {
+    //   const resultsFilter = await axios.get(
+    //     "https://temperaturesback.netlify.app/.netlify/functions/index/api/lecture/reports",
+    //     {
+    //       params: {
+    //         from: valueFrom.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
+    //         to: valueTo.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
+    //         type: type,
+    //         sensor: sensor,
+    //       },
+    //     }
+    //   );
+    //   setValueResultsFilter(resultsFilter.data);
+    // } catch (error) {
+    //   setShowTable(false);
+    //   Swal.fire({
+    //     title: "Error!",
+    //     text: error?.response?.data?.message ?? "There was an error reading the data",
+    //     icon: "error",
+    //     confirmButtonText: "Ok",
+    //   });
+    // }
+
+    setValueResultsFilter(generateMockReport(valueFrom, valueTo, sensor));
   };
 
   const csvdownload = async () => {
@@ -139,7 +155,7 @@ const Reportes = () => {
         resultsFilter.map((el) => {
           return {
             ...el,
-            LECTOR: lector,
+            READER: lector,
           };
         })
       );
@@ -154,7 +170,7 @@ const Reportes = () => {
         title: "Error!",
         text:
           error?.response?.data?.message ??
-          "Hubo un error al momento de las descargas",
+          "There was an error while downloading",
         icon: "error",
         confirmButtonText: "Ok",
       });
@@ -176,14 +192,14 @@ const Reportes = () => {
         head: [headers],
         body: body,
       });
-      doc.save("descarga.pdf");
+      doc.save("download.pdf");
     } catch (error) {
       console.log(error);
       Swal.fire({
         title: "Error!",
         text:
           error?.response?.data?.message ??
-          "Hubo un error al momento de las descargas",
+          "There was an error while downloading",
         icon: "error",
         confirmButtonText: "Ok",
       });
@@ -199,7 +215,7 @@ const Reportes = () => {
         }}
         gutterBottom
       >
-        Reportes
+        Reports
       </Typography>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <br />
@@ -213,7 +229,7 @@ const Reportes = () => {
         >
           <Grid item xs={12} sm={4}>
             <DateTimePicker
-              label="Desde"
+              label="From"
               value={valueFrom}
               onChange={handleChangeFrom}
               renderInput={(params) => <TextField {...params} />}
@@ -221,7 +237,7 @@ const Reportes = () => {
           </Grid>
           <Grid item xs={12} sm={4}>
             <DateTimePicker
-              label="Hasta"
+              label="To"
               value={valueTo}
               onChange={handleChangeTo}
               renderInput={(params) => <TextField {...params} />}
@@ -250,7 +266,7 @@ const Reportes = () => {
                     textTransform: "capitalize",
                   }}
                 >
-                  Buscar
+                  Search
                 </Typography>
               </Fab>
             )}
@@ -322,7 +338,7 @@ const Reportes = () => {
               id="standard-select-number"
               variant="outlined"
               select
-              label="Lector"
+              label="Reader"
               value={lector}
               onChange={handleChangeLector}
               sx={{

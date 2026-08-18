@@ -1,91 +1,97 @@
-import { Grid, Box } from "@mui/material";
+import { useEffect, useRef, useState } from "react";
+import { Grid, Box, Typography, Card, CardContent } from "@mui/material";
+import ReactApexChart from "react-apexcharts";
 import dayjs from "dayjs";
-import { useEffect, useState } from "react";
-import utc from "dayjs/plugin/utc";
-import axios from "axios";
-import Swal from "sweetalert2";
-
-import { SalesOverview } from "../dashboards/dashboard1-components";
 
 import "../dashboards/dashboard1.css";
+import "./realtime.css";
 
-const Dashboard1 = () => {
-  dayjs.extend(utc);
-  const dateFrom = dayjs()
-    .utc()
-    .subtract(5, "month")
-    .format("YYYY-MM-DDTHH:mm:ss.SSS[Z]");
-  const dateTo = dayjs()
-    .utc()
-    .add(50, "day")
-    .format("YYYY-MM-DDTHH:mm:ss.SSS[Z]");
+const MAX_POINTS = 30;
+const TICK_MS = 2000;
 
-  const [valueFrom, setValueFrom] = useState(dayjs(dateFrom));
-  const [valueTo, setValueTo] = useState(dayjs(dateTo));
-  const [valueTC1, setValueTC1] = useState([]);
-  const [valueTC2, setValueTC2] = useState([]);
+const READERS = [
+  { key: "tc1", label: "Reader 1", base: 22, variance: 3 },
+  { key: "tc2", label: "Reader 2", base: 25, variance: 4 },
+];
 
-  const [showGraphic, setShowGraphic] = useState(false);
+const nextValue = (base, variance, prev) => {
+  const drift = (Math.random() - 0.5) * variance;
+  const value = prev !== null ? prev * 0.7 + (base + drift) * 0.3 : base + drift;
+  return Number(value.toFixed(1));
+};
+
+const RealTime = () => {
+  const [series, setSeries] = useState(
+    READERS.map((r) => ({ name: r.label, data: [] }))
+  );
+  const [current, setCurrent] = useState(READERS.map(() => null));
+  const lastValues = useRef(READERS.map(() => null));
 
   useEffect(() => {
-    setValueFrom(valueFrom);
-    setValueTo(valueTo);
+    const interval = setInterval(() => {
+      const timestamp = dayjs().format("HH:mm:ss");
 
-    operateValues();
-  }, [valueFrom, valueTo]);
-  const operateValues = async () => {
-    try {
-      const resultstc1 = await axios.get(
-        "https://temperaturesback.netlify.app/.netlify/functions/index/api/lecture/ranges",
-        {
-          params: {
-            from: valueFrom.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
-            to: valueTo.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
-            type: "tc1",
-          },
-        }
+      lastValues.current = lastValues.current.map((prev, i) =>
+        nextValue(READERS[i].base, READERS[i].variance, prev)
       );
 
-      console.log(resultstc1.data);
-      setValueTC1(resultstc1.data);
+      setCurrent([...lastValues.current]);
 
-      const resultstc2 = await axios.get(
-        "https://temperaturesback.netlify.app/.netlify/functions/index/api/lecture/ranges",
-        {
-          params: {
-            from: valueFrom.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
-            to: valueTo.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
-            type: "tc2",
-          },
-        }
+      setSeries((prevSeries) =>
+        prevSeries.map((s, i) => {
+          const data = [...s.data, { x: timestamp, y: lastValues.current[i] }];
+          if (data.length > MAX_POINTS) data.shift();
+          return { ...s, data };
+        })
       );
-      console.log(resultstc2.data);
+    }, TICK_MS);
 
-      setValueTC2(resultstc2.data);
-      setShowGraphic(true);
-    } catch (error) {
-      setShowGraphic(false);
-      Swal.fire({
-        title: "Error!",
-        text:
-          error?.response?.data?.message ??
-          "Hubo un error al momento de la lectura",
-        icon: "error",
-        confirmButtonText: "Ok",
-      });
-    }
+    return () => clearInterval(interval);
+  }, []);
+
+  const options = {
+    chart: {
+      id: "realtime",
+      animations: {
+        enabled: true,
+        easing: "linear",
+        dynamicAnimation: { speed: TICK_MS },
+      },
+      toolbar: { show: false },
+    },
+    stroke: { curve: "smooth", width: 2 },
+    xaxis: { type: "category" },
+    yaxis: { title: { text: "°C" } },
+    dataLabels: { enabled: false },
+    legend: { show: true },
   };
+
   return (
     <Box>
-      <Grid container spacing={0}>
-        <Grid item xs={12} lg={12}>
-          {showGraphic && (
-            <SalesOverview valueTC1={valueTC1} valueTC2={valueTC2} />
-          )}
-        </Grid>
+      <Typography variant="h1" gutterBottom>
+        Real-time readings
+      </Typography>
+      <Grid container spacing={2} sx={{ mb: 2 }}>
+        {READERS.map((r, i) => (
+          <Grid item xs={12} sm={6} key={r.key}>
+            <Card variant="outlined">
+              <CardContent>
+                <Typography color="textSecondary" variant="h6">
+                  {r.label}
+                </Typography>
+                <Typography variant="h2">
+                  {current[i] !== null ? `${current[i]} °C` : "—"}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
       </Grid>
+      <Box>
+        <ReactApexChart options={options} series={series} type="line" height={350} />
+      </Box>
     </Box>
   );
 };
 
-export default Dashboard1;
+export default RealTime;

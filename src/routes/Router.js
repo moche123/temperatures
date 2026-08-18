@@ -9,21 +9,6 @@ const FullLayout = lazy(() => import("../layouts/FullLayout/FullLayout.js"));
 const Dashboard1 = lazy(() => import("../views/dashboards/Dashboard1.js"));
 const TiempoReal = lazy(() => import("../views/realtime/index.js"));
 const Reportes = lazy(() => import("../views/reportes/index.js"));
-/*****Tables******/
-const BasicTable = lazy(() => import("../views/tables/BasicTable.js"));
-
-// form elements
-const ExAutoComplete = lazy(() =>
-  import("../views/FormElements/ExAutoComplete.js")
-);
-const ExButton = lazy(() => import("../views/FormElements/ExButton.js"));
-const ExCheckbox = lazy(() => import("../views/FormElements/ExCheckbox.js"));
-const ExRadio = lazy(() => import("../views/FormElements/ExRadio.js"));
-const ExSlider = lazy(() => import("../views/FormElements/ExSlider.js"));
-const ExSwitch = lazy(() => import("../views/FormElements/ExSwitch.js"));
-
-// form layouts
-const FormLayouts = lazy(() => import("../views/FormLayouts/FormLayouts.js"));
 
 /*****Routes******/
 
@@ -36,14 +21,6 @@ const ThemeRoutes = [
       { path: "/inicio", exact: true, element: <Dashboard1 /> },
       { path: "/tiempo-real", exact: true, element: <TiempoReal /> },
       { path: "/reportes", exact: true, element: <Reportes /> },
-      { path: "tables/basic-table", element: <BasicTable /> },
-      { path: "/form-layouts/form-layouts", element: <FormLayouts /> },
-      { path: "/form-elements/autocomplete", element: <ExAutoComplete /> },
-      { path: "/form-elements/button", element: <ExButton /> },
-      { path: "/form-elements/checkbox", element: <ExCheckbox /> },
-      { path: "/form-elements/radio", element: <ExRadio /> },
-      { path: "/form-elements/slider", element: <ExSlider /> },
-      { path: "/form-elements/switch", element: <ExSwitch /> },
     ],
   },
 ];

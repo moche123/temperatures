@@ -1,6 +1,6 @@
 import React from "react";
 import { useLocation } from "react-router";
-import { Link, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import {
   Box,
   Drawer,
@@ -11,9 +11,7 @@ import {
   ListItemText,
 } from "@mui/material";
 import { SidebarWidth } from "../../../assets/global/Theme-variable";
-import LogoIcon from "../Logo/LogoIcon";
 import Menuitems from "./data";
-// import Buynow from "./Buynow";
 
 const Sidebar = (props) => {
   const [open, setOpen] = React.useState(true);
@@ -31,12 +29,6 @@ const Sidebar = (props) => {
 
   const SidebarContent = (
     <Box sx={{ p: 3, height: "calc(100vh - 40px)" }}>
-      <Link to="/">
-        <Box sx={{ display: "flex", alignItems: "Center" }}>
-          <LogoIcon />
-        </Box>
-      </Link>
-
       <Box>
         <List
           sx={{
@@ -77,7 +69,6 @@ const Sidebar = (props) => {
           })}
         </List>
       </Box>
-      {/* <Buynow /> */}
     </Box>
   );
   if (lgUp) {
