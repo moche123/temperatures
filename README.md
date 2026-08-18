@@ -1,40 +1,40 @@
-# Temperatures — Dashboard de monitoreo de temperaturas
+# Temperatures — Temperature Monitoring Dashboard
 
-Frontend del dashboard de monitoreo de temperaturas. Construido sobre el template admin "Flexy" (MUI + React + Vite), del cual solo quedan tres páginas funcionales reales:
+Frontend for a temperature-monitoring dashboard. Built on the "Flexy" MUI admin template (React + Vite), of which only three real feature pages remain:
 
-- **Inicio** — dashboard con gráfico de lecturas.
-- **Tiempo real** — vista de lecturas en tiempo real.
-- **Reportes** — filtrado y exportación de reportes (XLSX y PDF).
+- **Inicio** — dashboard with a readings chart.
+- **Tiempo real** — real-time readings view.
+- **Reportes** — filtered report export (XLSX and PDF).
 
-El backend vive en un repo aparte y se consume como Netlify Functions en `https://temperaturesback.netlify.app/.netlify/functions/index`. No hay backend local ni `.env`: la URL base está hardcodeada en cada vista que llama a la API.
+The backend lives in a separate repo and is consumed as Netlify Functions at `https://temperaturesback.netlify.app/.netlify/functions/index`. There is no local backend or `.env`: the base URL is hardcoded in each view that calls the API.
 
-## Conceptos del dominio
+## Domain concepts
 
-Las lecturas se consultan por:
+Readings are queried by:
 
-- `type` (`tc1` / `tc2`) — "Lector 1 / Lector 2", los dos endpoints de collector/reader.
+- `type` (`tc1` / `tc2`) — "Lector 1 / Lector 2", the two collector/reader endpoints.
 - `sensor` (`AMBIENTE1`, `AMBIENTE2`, `SENSOR1`-`4`).
 
-Estas listas de valores están definidas localmente en `src/views/reportes/index.js` (`lectors`, `sensors`), no vienen de una API.
+These value lists are defined locally in `src/views/reportes/index.js` (`lectors`, `sensors`), not sourced from an API.
 
-## Comandos
+## Commands
 
-- `npm run dev` — levanta el servidor de desarrollo (Vite).
-- `npm run build` — build de producción.
-- `npm run preview` — preview del build de producción.
+- `npm run dev` — start the dev server (Vite).
+- `npm run build` — production build.
+- `npm run preview` — preview the production build.
 - `npm run lint` — ESLint (`--max-warnings 0`).
 
-No hay suite de tests en este repo.
+No test suite exists in this repo.
 
-## Arquitectura
+## Architecture
 
-- **Rutas**: `src/routes/Router.js` define las rutas con `react-router-dom` v7 (`useRoutes`), todas con lazy loading. Todo anida bajo `FullLayout` (`src/layouts/FullLayout/FullLayout.js`), que renderiza `Sidebar` + `Footer` + `<Outlet />`. El menú del sidebar es una lista separada en `src/layouts/FullLayout/Sidebar/data.js` — agregar una ruta implica actualizar `Router.js` y `data.js`.
-- **Archivos `.js` con JSX**: la mayoría de los "componentes" son `.js` (no `.jsx`) pero contienen JSX. `vite.config.js` fuerza a esbuild a tratar `src/**/*.js` como JSX.
-- **Fetching de datos**: cada vista llama al backend directo con `axios` dentro de `useEffect`/handlers — sin capa de servicio/API compartida ni React Query. Patrón repetido: armar rango de fechas en UTC con `dayjs`, `axios.get`, éxito → actualizar estado (chart/tabla), error → modal con `sweetalert2`.
-- **Charts**: `react-apexcharts` / `apexcharts`, vía `SalesOverview` (`src/views/dashboards/dashboard1-components/SalesOverview.js`).
-- **Theming**: config del theme de MUI en `src/assets/global/` (`Theme-variable.js`, `Typography.js`, `Shadows.js`).
-- **Deploy**: Netlify (`netlify.toml`), SPA fallback reescribe todos los paths a `/`.
+- **Routing**: `src/routes/Router.js` defines routes with `react-router-dom` v7 (`useRoutes`), all lazy-loaded. Everything nests under `FullLayout` (`src/layouts/FullLayout/FullLayout.js`), which renders `Sidebar` + `Footer` + `<Outlet />`. The sidebar menu is a separate list in `src/layouts/FullLayout/Sidebar/data.js` — adding a route means updating both `Router.js` and `data.js`.
+- **`.js` files with JSX**: most "components" are `.js` (not `.jsx`) but contain JSX. `vite.config.js` forces esbuild to treat `src/**/*.js` as JSX.
+- **Data fetching**: each view calls the backend directly with `axios` inside `useEffect`/handlers — no shared API service layer, no React Query. Repeated pattern: build a UTC date range with `dayjs`, `axios.get`, success → update state (chart/table), failure → `sweetalert2` error modal.
+- **Charts**: `react-apexcharts` / `apexcharts`, via `SalesOverview` (`src/views/dashboards/dashboard1-components/SalesOverview.js`).
+- **Theming**: MUI theme config in `src/assets/global/` (`Theme-variable.js`, `Typography.js`, `Shadows.js`).
+- **Deploy**: Netlify (`netlify.toml`), SPA fallback rewrites all paths to `/`.
 
-## Idioma
+## Language
 
-Los textos de la UI están en español (audiencia de la app).
+UI copy is in Spanish (app's audience).
